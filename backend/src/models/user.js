@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String, // URL string for the profile picture
-      default: "https://via.placeholder.com/150",
+      default: "",
     },
     // Array of Channel IDs to track which channels this user owns
     channels: [
