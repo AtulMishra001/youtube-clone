@@ -1,6 +1,6 @@
 import { User } from "../models/User.js";
 import bcrypt from "bcryptjs";
-
+import jwt from "jsonwebtoken";
 /**
  * Handles user registration with validation.
  * I've implemented specific error messages for each field to ensure
@@ -76,5 +76,66 @@ export const registerUser = async (req, res) => {
         message: "Server Error: Could not complete registration",
         error: error.message,
       });
+  }
+};
+
+
+/**
+ * Handles user login and JWT generation.
+ * I am implementing JWT-based authentication to ensure stateless and secure 
+ * access to protected routes as per the project requirements.
+ */
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // --- STEP 1: INPUT VALIDATION ---
+    // Providing specific feedback if login fields are missing.
+    if (!email) {
+      return res.status(400).json({ message: "Email is required to log in." });
+    }
+    if (!password) {
+      return res.status(400).json({ message: "Password is required to log in." });
+    }
+
+    // --- STEP 2: USER VERIFICATION ---
+    // Finding the user by email to verify if the account exists.
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found. Please register first." });
+    }
+
+    // --- STEP 3: PASSWORD COMPARISON ---
+    // Using bcrypt.compare to check the provided password against the hashed one in the DB.
+    // This ensures we never handle or compare plain-text passwords directly.
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials. Please check your password." });
+    }
+
+    // --- STEP 4: JWT GENERATION ---
+    // If credentials are valid, I generate a JWT signed with a secret key.
+    // The payload includes the user ID so we can identify the user in subsequent requests.
+    const token = jwt.sign(
+      { id: user._id }, 
+      process.env.JWT_SECRET, 
+      { expiresIn: "7d" } // Token expires in 7 days
+    );
+
+    // --- STEP 5: SUCCESSFUL RESPONSE ---
+    // Sending the token and user details (excluding password) back to the frontend.
+    res.status(200).json({
+      message: `Welcome back, ${user.username}!`,
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server Error during login", error: error.message });
   }
 };
