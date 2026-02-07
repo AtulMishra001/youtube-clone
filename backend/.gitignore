@@ -1,0 +1,35 @@
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# dotenv environment variables file
+.env
+# keep an example file for reference
+!.env.example
+
+# Log files
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Build artifacts/coverage
+lib-cov
+coverage
+.nyc_output
+.next # if using Next.js
+dist # if you have a build directory
+
+# Yarn integrity file
+.yarn-integrity
+yarn-error.log
+
+# Editor/OS specific files
+.DS_Store # Mac specific
+.vscode # Optional: ignore VS Code workspace settings
