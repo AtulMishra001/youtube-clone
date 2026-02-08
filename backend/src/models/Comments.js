@@ -22,4 +22,4 @@ const commentSchema = new mongoose.Schema(
   { timestamps: true }, // Handles the comment timestamp automatically
 );
 
-export const Comment = mongoose.model("Comment", commentSchema);
+export const Comment = mongoose.model.Comment || mongoose.model("Comment", commentSchema);
