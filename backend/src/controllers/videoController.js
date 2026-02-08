@@ -1,4 +1,4 @@
-import { Video } from "../models/video.js";
+import { Video } from "../models/Video.js";
 
 /**
  * Fetch all videos for the Home Page.
@@ -61,5 +61,77 @@ export const getVideoById = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error fetching video details", error: error.message });
+  }
+};
+
+
+/**
+ * Logic to handle video likes.
+ * I have implemented this to be mutually exclusive: if a user likes a video,
+ * any existing dislike from that user is automatically removed.
+ */
+export const likeVideo = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const userId = req.user._id; // From authMiddleware
+
+    const video = await Video.findById(videoId);
+    if (!video) return res.status(404).json({ message: "Video not found" });
+
+    // Check if user has already liked the video (Toggle functionality)
+    const isLiked = video.likes.includes(userId);
+
+    if (isLiked) {
+      // If already liked, clicking again removes the like
+      video.likes = video.likes.filter((id) => id.toString() !== userId.toString());
+    } else {
+      // Add like and ensure the user is removed from dislikes
+      video.likes.push(userId);
+      video.dislikes = video.dislikes.filter((id) => id.toString() !== userId.toString());
+    }
+
+    await video.save();
+    res.status(200).json({ 
+      likesCount: video.likes.length, 
+      dislikesCount: video.dislikes.length,
+      isLiked: !isLiked 
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error processing like", error: error.message });
+  }
+};
+
+
+
+/**
+ * Logic to handle video dislikes.
+ * Similar to the like logic, this ensures that a user cannot 
+ * simultaneously like and dislike a video.
+ */
+export const dislikeVideo = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const userId = req.user._id;
+
+    const video = await Video.findById(videoId);
+    if (!video) return res.status(404).json({ message: "Video not found" });
+
+    const isDisliked = video.dislikes.includes(userId);
+
+    if (isDisliked) {
+      video.dislikes = video.dislikes.filter((id) => id.toString() !== userId.toString());
+    } else {
+      video.dislikes.push(userId);
+      video.likes = video.likes.filter((id) => id.toString() !== userId.toString());
+    }
+
+    await video.save();
+    res.status(200).json({ 
+      likesCount: video.likes.length, 
+      dislikesCount: video.dislikes.length,
+      isDisliked: !isDisliked 
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error processing dislike", error: error.message });
   }
 };

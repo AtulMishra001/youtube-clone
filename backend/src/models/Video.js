@@ -23,14 +23,18 @@ const videoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    likes: {
-      type: Number,
-      default: 0,
-    },
-    dislikes: {
-      type: Number,
-      default: 0,
-    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    dislikes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     category: {
       type: String,
       required: true, // Essential for the filter functionality on the Home Page
@@ -42,7 +46,7 @@ const videoSchema = new mongoose.Schema(
       ref: "Channel",
       required: true,
     },
-    // Reference to the User who uploaded the video (redundant but useful for quick access)
+    // Reference to the User who uploaded the video
     uploader: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
