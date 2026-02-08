@@ -5,6 +5,7 @@ import dbConnect from "./src/config/dbConnect.js";
 import authRoute from "./src/routes/authRoutes.js";
 import videoRoute from "./src/routes/videoRoutes.js"
 import chennalRoute from "./src/routes/channelRoutes.js"
+import commentsRoute from "./src/routes/commentRoutes.js"
 // Load environment variables
 dotenv.config();
 
@@ -15,9 +16,10 @@ app.use(cors());
 app.use(express.json()); // Parses incoming JSON requests
 
 //routes
-app.use("/api/auth",authRoute);
+app.use("/api/auth", authRoute);
 app.use("/api/videos", videoRoute);
 app.use("/api/chennal", chennalRoute);
+app.use("/api/comment/", commentsRoute)
 
 
 // Basic Route for testing

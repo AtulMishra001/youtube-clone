@@ -1,4 +1,4 @@
-import { Comment } from "../models/Comment.js";
+import { Comment } from "../models/Comments.js";
 
 /**
  * Adds a new comment to a specific video.
