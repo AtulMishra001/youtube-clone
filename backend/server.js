@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 import authRoute from "./src/routes/authRoutes.js";
+import videoRoute from "./src/routes/videoRoutes.js"
 // Load environment variables
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(express.json()); // Parses incoming JSON requests
 
 //routes
 app.use("/api/auth",authRoute);
+app.use("/api/videos", videoRoute);
 
 // Basic Route for testing
 app.get("/", (req, res) => {

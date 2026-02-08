@@ -17,6 +17,10 @@ const channelSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    channelAvatar: {
+      type: String,
+      default: "",
+    },
     channelBanner: {
       type: String,
       default: "",

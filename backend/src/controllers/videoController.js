@@ -24,7 +24,7 @@ export const getAllVideos = async (req, res) => {
     // Fetching videos and 'populating' channel data so we can show
     // the Channel Name and Avatar on the home page grid.
     const videos = await Video.find(query)
-      .populate("channelId", "channelName banner")
+      .populate("channelId", "channelName channelAvatar")
       .sort({ createdAt: -1 }); // Showing newest videos first
 
     res.status(200).json(videos);
