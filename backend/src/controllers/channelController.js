@@ -8,7 +8,7 @@ import { Video } from "../models/Video.js";
  */
 export const createChannel = async (req, res) => {
   try {
-    const { channelName, description, banner } = req.body;
+    const { channelName, description, channelBanner, channelAvatar } = req.body;
 
     if (!channelName) {
       return res.status(400).json({ message: "Channel name is required." });
@@ -18,7 +18,8 @@ export const createChannel = async (req, res) => {
     const newChannel = await Channel.create({
       channelName,
       description,
-      banner,
+      channelBanner,
+      channelAvatar,
       owner: req.user._id, // Set by the 'protect' middleware
     });
 
