@@ -1,63 +1,68 @@
 import { Link } from "react-router-dom";
-import { format } from "timeago.js"; // Converts timestamp to "2 days ago"
-import { FaCheckCircle } from "react-icons/fa"; // Verified badge icon
+import { format } from "timeago.js";
+import { FaCheckCircle } from "react-icons/fa";
 
-const VideoCard = ({ video }) => {
+const VideoCard = ({ video, horizontal = false }) => {
   return (
-    <div className="flex flex-col gap-2 cursor-pointer group">
+    <Link
+      to={`/video/${video._id}`}
+      className={`flex ${horizontal ? "flex-row gap-2 mb-2" : "flex-col gap-2"} group cursor-pointer`}
+    >
       {/* THUMBNAIL SECTION */}
-      {/* Clicking the thumbnail takes us to the video player */}
-      <Link to={`/video/${video._id}`} className="relative">
+      <div
+        className={`relative flex-none ${horizontal ? "w-40 h-24" : "w-full aspect-video"}`}
+      >
         <img
           src={video.thumbnailUrl}
           alt={video.title}
-          className="w-full aspect-video object-cover rounded-xl hover:rounded-none transition-all duration-200"
+          className={`w-full h-full object-cover rounded-xl transition-all duration-200 
+            ${!horizontal && "group-hover:rounded-none"}`}
         />
-        {/* Optional: Hardcoded duration badge for that authentic YouTube look */}
-        <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-medium px-1.5 py-0.5 rounded">
-          12:45
+        <span className="absolute bottom-1 right-1 bg-black/80 text-white text-[10px] font-bold px-1 rounded">
+          10:00
         </span>
-      </Link>
+      </div>
 
       {/* METADATA SECTION */}
-      <div className="flex gap-3 items-start mt-1">
-        {/* Channel Avatar (Link to Channel Page) */}
-        <Link to={`/channel/${video.channelId?._id}`}>
-          <img
-            src={
-              video.channelId?.channelAvatar || "https://via.placeholder.com/40"
-            }
-            alt="Channel Avatar"
-            className="w-9 h-9 rounded-full object-cover"
-          />
-        </Link>
+      <div className={`flex gap-3 ${horizontal ? "gap-1" : "mt-1"}`}>
+        {/* Hide Avatar in Horizontal/Sidebar view to match real YouTube */}
+        {!horizontal && (
+          <div className="flex-none">
+            <img
+              src={
+                video.channelId?.channelAvatar ||
+                "https://via.placeholder.com/40"
+              }
+              alt="avatar"
+              className="w-9 h-9 rounded-full object-cover"
+            />
+          </div>
+        )}
 
-        {/* Text Details */}
-        <div className="flex flex-col">
-          {/* Title: Truncated to 2 lines max using Tailwind's line-clamp */}
-          <h3 className="text-yt-text-primary text-sm font-bold leading-tight line-clamp-2 group-hover:text-white">
+        <div className="flex flex-col overflow-hidden">
+          {/* Title - Smaller text for sidebar (horizontal) */}
+          <h3
+            className={`text-yt-text-primary font-bold leading-tight line-clamp-2 group-hover:text-white
+            ${horizontal ? "text-[14px] mb-1" : "text-sm"}`}
+          >
             {video.title}
           </h3>
 
           {/* Channel Name */}
-          <Link
-            to={`/channel/${video.channelId?._id}`}
-            className="text-yt-text-secondary text-xs mt-1 hover:text-white flex items-center gap-1"
-          >
-            {video.channelId?.channelName || "Unknown Channel"}
-            <FaCheckCircle className="text-yt-text-secondary text-[10px]" />
-          </Link>
+          <div className="text-yt-text-secondary text-[12px] flex items-center gap-1 mt-0.5 hover:text-white">
+            {video.channelId?.channelName}
+            <FaCheckCircle className="text-[10px]" />
+          </div>
 
           {/* Views & Time */}
-          <div className="text-yt-text-secondary text-xs">
+          <div className="text-yt-text-secondary text-[12px]">
             <span>{video.views?.toLocaleString()} views</span>
             <span className="mx-1">•</span>
-            {/* Using timeago to automatically format the createdAt date */}
             <span>{format(video.createdAt)}</span>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
