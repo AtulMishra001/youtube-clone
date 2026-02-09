@@ -29,15 +29,10 @@ const MyChannels = () => {
     // 2. FETCH CHANNELS (Only if user exists)
     const fetchMyChannels = async () => {
       try {
-        // Double check your Server.js!
-        // If app.use("/api/channels", ...) -> use "/channels/my-channels"
-        // If app.use("/api/channel", ...)  -> use "/channel/my-channels"
         const { data } = await api.get("/channel/my-channels"); // Try plural first (standard convention)
         setChannels(data);
       } catch (err) {
         console.error("Failed to fetch channels", err);
-        // Optional: fallback to singular if plural fails (debugging only)
-        // try { const { data } = await api.get("/channel/my-channels"); setChannels(data); } catch (e) {}
       } finally {
         setLoading(false);
       }
@@ -72,7 +67,7 @@ const MyChannels = () => {
             <Link
               to={`/channel/${channel._id}`}
               key={channel._id}
-              className="bg-yt-light-gray p-6 rounded-xl flex flex-col items-center gap-4 hover:bg-[#3F3F3F] transition-colors border border-transparent hover:border-yt-text-secondary group"
+              className="bg-yt-light-gray p-6 rounded-xl flex flex-col items-center gap-4 hover:bg-yt-border transition-colors border border-transparent hover:border-yt-text-secondary group"
             >
               <img
                 src={channel.channelAvatar}
@@ -95,7 +90,7 @@ const MyChannels = () => {
 
           <Link
             to="/create-channel"
-            className="border-2 border-dashed border-yt-text-secondary rounded-xl flex flex-col items-center justify-center gap-2 text-yt-text-secondary hover:text-white hover:border-white transition-all min-h-[200px]"
+            className="border-2 border-dashed border-yt-text-secondary rounded-xl flex flex-col items-center justify-center gap-2 text-yt-text-secondary hover:text-white hover:border-white transition-all min-h-50"
           >
             <FaPlusSquare size={30} />
             <span className="font-bold">Create New Channel</span>
