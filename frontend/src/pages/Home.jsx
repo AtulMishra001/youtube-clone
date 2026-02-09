@@ -54,7 +54,7 @@ const Home = () => {
               ${
                 currentCategory === cat
                   ? "bg-yt-text-primary text-yt-black"
-                  : "bg-yt-light-gray text-yt-text-primary hover:bg-[#3F3F3F]"
+                  : "bg-yt-light-gray text-yt-text-primary hover:bg-yt-border"
               }`}
           >
             {cat}
