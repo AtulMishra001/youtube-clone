@@ -53,6 +53,8 @@ const VideoDetail = () => {
             src={video.videoUrl}
             controls
             autoPlay
+            controlsList="nodownload" 
+            onContextMenu={(e) => e.preventDefault()}
             className="w-full h-full object-contain"
           />
         </div>

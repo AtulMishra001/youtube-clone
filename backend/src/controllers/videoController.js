@@ -45,7 +45,7 @@ export const getVideoById = async (req, res) => {
 
     const video = await Video.findById(id).populate(
       "channelId",
-      "channelName subscribers channelAvatar",
+      "channelName subscribers channelAvatar owner",
     );
 
     if (!video) {
