@@ -1,13 +1,19 @@
 @import "tailwindcss";
 
-/* Optional: Your custom YouTube background color */
 @theme {
-  --color-youtube-black: #0F0F0F;
-  --color-youtube-gray: #272727;
-  --color-youtube-red: #FF0000;
+  /* The Exact YouTube Dark Mode Palette */
+  --color-yt-black: #0F0F0F;
+  --color-yt-gray: #0F0F0F;
+  --color-yt-light-gray: #272727; 
+  --color-yt-border: #3F3F3F;
+  --color-yt-text-primary: #F1F1F1;
+  --color-yt-text-secondary: #AAAAAA;
+  --color-yt-red: #FF0000;
+  --color-yt-blue: #3EA6FF;
 }
 
 body {
-  background-color: var(--color-youtube-black);
-  color: white;
+  background-color: var(--color-yt-black);
+  color: var(--color-yt-text-primary);
+  font-family: "Roboto", sans-serif; /* Standard YouTube font */
 }
