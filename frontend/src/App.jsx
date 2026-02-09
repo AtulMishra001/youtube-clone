@@ -10,6 +10,7 @@ import CreateChannel from "./pages/CreateChannel";
 import Channel from "./pages/Channel";
 import ManageVideo from "./pages/ManageVideo";
 import MyChannels from "./pages/MyChannels";
+import NotFound from "./pages/NotFound"; // Import the new component
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -20,19 +21,15 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="flex flex-col h-screen">
-          {/* Requirement: Header with toggleable hamburger menu */}
           <Navbar toggleSidebar={toggleSidebar} />
 
           <div className="flex flex-1 pt-14">
-            {" "}
-            {/* pt-14 matches Navbar height */}
-            {/* Requirement: Static sidebar that can toggle */}
-            <Sidebar isOpen={isSidebarOpen} />
-            {/* The main content area grows to fill the remaining space */}
+            <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
             <main
               className={`flex-1 overflow-y-auto bg-yt-black p-4 transition-all duration-300
-                ml-0  /* Default: Mobile has 0 margin (Sidebar is overlay) */
-                ${isSidebarOpen ? "md:ml-60" : "md:ml-16"} /* Desktop: Push content right */
+                ml-0 
+                ${isSidebarOpen ? "md:ml-60" : "md:ml-16"}
               `}
             >
               <Routes>
@@ -43,6 +40,8 @@ function App() {
                 <Route path="/channel/:id" element={<Channel />} />
                 <Route path="/manage/video/:id" element={<ManageVideo />} />
                 <Route path="/my-channels" element={<MyChannels />} />
+
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
           </div>
