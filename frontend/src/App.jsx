@@ -7,9 +7,6 @@ import Home from "./pages/Home";
 import VideoDetail from "./pages/VideoDetail";
 import Login from "./pages/Login";
 
-// I have structured App.jsx to use a Layout approach.
-// This ensures that the Sidebar state (open/closed) is managed centrally
-// and doesn't reset when navigating between pages.
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -19,13 +16,13 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="flex flex-col h-screen">
-          {/* Requirement: Header with toggleable hamburger menu [cite: 8] */}
+          {/* Requirement: Header with toggleable hamburger menu */}
           <Navbar toggleSidebar={toggleSidebar} />
 
           <div className="flex flex-1 pt-14">
             {" "}
-            {/* pt-14 matches Navbar height [cite: 7] */}
-            {/* Requirement: Static sidebar that can toggle [cite: 8] */}
+            {/* pt-14 matches Navbar height */}
+            {/* Requirement: Static sidebar that can toggle */}
             <Sidebar isOpen={isSidebarOpen} />
             {/* The main content area grows to fill the remaining space */}
             <main
