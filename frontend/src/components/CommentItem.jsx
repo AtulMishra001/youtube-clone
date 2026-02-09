@@ -20,7 +20,7 @@ const CommentItem = ({ comment, videoId, refreshComments }) => {
   const handleDelete = async () => {
     if (window.confirm("Delete this comment?")) {
       try {
-        await api.delete(`/videos/${videoId}/comments/${comment._id}`);
+        await api.delete(`/comment/${comment._id}`);
         refreshComments();
       } catch (err) {
         console.error("Delete failed", err);
@@ -30,9 +30,7 @@ const CommentItem = ({ comment, videoId, refreshComments }) => {
 
   const handleUpdate = async () => {
     try {
-      await api.put(`/videos/${videoId}/comments/${comment._id}`, {
-        text: editedText,
-      });
+      await api.put(`/comment/${comment._id}`, { text: editedText });
       setIsEditing(false);
       refreshComments();
     } catch (err) {

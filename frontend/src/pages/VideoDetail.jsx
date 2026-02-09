@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import CommentSection from "../components/CommentSection";
 import api from "../utils/axios";
 import { format } from "timeago.js";
 import {
@@ -120,13 +121,8 @@ const VideoDetail = () => {
           </button>
         </div>
 
-        {/* COMMENT SECTION (Placeholder for next step) */}
-        <div className="mt-6">
-          <h3 className="text-xl font-bold mb-4">
-            {video.comments?.length || 0} Comments
-          </h3>
-          {/* We will build the CommentList component here next */}
-        </div>
+        <CommentSection videoId={video._id} />
+        {console.log(video)}
       </div>
 
       {/* RIGHT SECTION: Recommendations */}

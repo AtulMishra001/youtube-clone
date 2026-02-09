@@ -1,49 +1,11 @@
 import { Comment } from "../models/Comments.js";
 
-/**
- * Adds a new comment to a specific video.
- * I am linking the comment to both the Video and the User who is currently
- * logged in, as per the project's data handling requirements.
- */
-export const addComment = async (req, res) => {
-  try {
-    const { videoId, text } = req.body;
-
-    if (!text) {
-      return res.status(400).json({ message: "Comment text cannot be empty." });
-    }
-
-    const newComment = await Comment.create({
-      videoId,
-      userId: req.user._id, // Set by our 'protect' middleware
-      text,
-    });
-
-    // Populate the user details so the frontend can immediately display
-    // the commenter's name and avatar.
-    await newComment.populate("userId", "username avatar");
-
-    res.status(201).json(newComment);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error adding comment", error: error.message });
-  }
-};
-
-/**
- * Fetches all comments for a specific video.
- * I am sorting these by the newest first and populating user info
- * to provide a complete comment section UI
- */
+// GET /api/comment/:videoId
 export const getVideoComments = async (req, res) => {
   try {
-    const { videoId } = req.params;
-
-    const comments = await Comment.find({ videoId })
-      .populate("userId", "username avatar")
-      .sort({ createdAt: -1 });
-
+    const comments = await Comment.find({ videoId: req.params.videoId })
+      .populate("userId", "username channelAvatar") // Crucial for showing avatars
+      .sort({ createdAt: -1 }); // Newest comments first
     res.status(200).json(comments);
   } catch (error) {
     res
@@ -52,33 +14,40 @@ export const getVideoComments = async (req, res) => {
   }
 };
 
-/**
- * Updates a comment's text.
- * I've implemented a security check to ensure that a user can only
- * edit their own comments
- */
+// POST /api/comment
+export const addComment = async (req, res) => {
+  try {
+    const { text, videoId } = req.body;
+    const newComment = new Comment({
+      text,
+      videoId,
+      userId: req.user._id, // From protect middleware
+    });
+    const savedComment = await newComment.save();
+    res.status(201).json(savedComment);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error adding comment", error: error.message });
+  }
+};
+
+// PUT /api/comment/:commentId
 export const updateComment = async (req, res) => {
   try {
-    const { commentId } = req.params;
-    const { text } = req.body;
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
 
-    const comment = await Comment.findById(commentId);
-
-    if (!comment) {
-      return res.status(404).json({ message: "Comment not found." });
-    }
-
-    // SECURITY: Verifying ownership
+    // Security: Check if the logged-in user owns the comment
     if (comment.userId.toString() !== req.user._id.toString()) {
       return res
         .status(403)
-        .json({ message: "You are not authorized to edit this comment." });
+        .json({ message: "You can only update your own comments" });
     }
 
-    comment.text = text;
+    comment.text = req.body.text;
     await comment.save();
-
-    res.status(200).json({ message: "Comment updated successfully.", comment });
+    res.status(200).json(comment);
   } catch (error) {
     res
       .status(500)
@@ -86,29 +55,20 @@ export const updateComment = async (req, res) => {
   }
 };
 
-/**
- * Deletes a comment.
- * This completes the full CRUD functionality required for the
- * video player page.
- */
+// DELETE /api/comment/:commentId
 export const deleteComment = async (req, res) => {
   try {
-    const { commentId } = req.params;
-    const comment = await Comment.findById(commentId);
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
 
-    if (!comment) {
-      return res.status(404).json({ message: "Comment not found." });
-    }
-
-    // SECURITY: Verifying ownership before deletion
     if (comment.userId.toString() !== req.user._id.toString()) {
       return res
         .status(403)
-        .json({ message: "You are not authorized to delete this comment." });
+        .json({ message: "You can only delete your own comments" });
     }
 
-    await Comment.findByIdAndDelete(commentId);
-    res.status(200).json({ message: "Comment deleted successfully." });
+    await Comment.findByIdAndDelete(req.params.commentId);
+    res.status(200).json({ message: "Comment deleted" });
   } catch (error) {
     res
       .status(500)
