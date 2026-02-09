@@ -107,20 +107,33 @@ export const deleteVideo = async (req, res) => {
   }
 };
 
-
-  export const getChannel = async (req, res)=> {
-    try {
-      const { channelId } = req.params;
-      const channel = await Channel.findById(channelId);
-      if(!channel) {
-        return res.status(404).json({message: "Channel not found"})
-      }
-
-      res.status(200).json(channel)
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error fetching channel details", error: error.message });
+export const getChannel = async (req, res) => {
+  try {
+    const { channelId } = req.params;
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+      return res.status(404).json({ message: "Channel not found" });
     }
-  
+
+    res.status(200).json(channel);
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Error fetching channel details",
+        error: error.message,
+      });
   }
+};
+
+export const getMyChannels = async (req, res) => {
+  try {
+    // req.user._id comes from your 'protect' middleware
+    const channels = await Channel.find({ owner: req.user._id });
+    res.status(200).json(channels);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching channels", error: error.message });
+  }
+};
