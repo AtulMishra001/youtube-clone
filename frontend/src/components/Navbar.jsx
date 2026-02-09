@@ -5,7 +5,7 @@ import { RiVideoAddLine, RiLogoutBoxRLine } from "react-icons/ri"; // Added Logo
 import { FaUserCircle, FaPlusSquare } from "react-icons/fa"; // Added Channel icon
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-
+import ytLogo from "../assets/youtubeIcon.png";
 const Navbar = ({ toggleSidebar }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -37,9 +37,7 @@ const Navbar = ({ toggleSidebar }) => {
           <HiMenu size={24} />
         </button>
         <Link to="/" className="flex items-center gap-1">
-          <div className="bg-yt-red p-1 rounded-lg">
-            <span className="text-white font-bold text-xs">YT</span>
-          </div>
+          <img src={ytLogo} className= "h-5 object-contain" alt="youtube Logo" />
           <span className="font-bold text-xl tracking-tighter hidden sm:block">
             YouTube
           </span>
@@ -64,7 +62,7 @@ const Navbar = ({ toggleSidebar }) => {
           type="submit"
           className="bg-yt-light-gray border border-l-0 border-yt-border px-5 py-1.5 rounded-r-full hover:bg-yt-border"
         >
-          <IoSearchOutline size={20} />
+          <IoSearchOutline size={25} />
         </button>
       </form>
 
