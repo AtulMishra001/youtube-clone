@@ -6,6 +6,8 @@ import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
 import VideoDetail from "./pages/VideoDetail";
 import Login from "./pages/Login";
+import CreateChannel from "./pages/CreateChannel";
+import Channel from "./pages/Channel";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -32,6 +34,8 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/video/:id" element={<VideoDetail />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/create-channel" element={<CreateChannel />} />
+                <Route path="/channel/:id" element={<Channel />} />
               </Routes>
             </main>
           </div>
