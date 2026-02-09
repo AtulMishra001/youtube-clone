@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* Optional: Your custom YouTube background color */
+@theme {
+  --color-youtube-black: #0F0F0F;
+  --color-youtube-gray: #272727;
+  --color-youtube-red: #FF0000;
+}
+
+body {
+  background-color: var(--color-youtube-black);
+  color: white;
+}
