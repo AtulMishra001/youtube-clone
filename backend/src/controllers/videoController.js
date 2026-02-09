@@ -12,7 +12,7 @@ export const getAllVideos = async (req, res) => {
     // FEATURE: Filtering by category (e.g., Music, Gaming)
     // This allows the "Filter Buttons" on the frontend to work dynamically.
     if (category && category !== "All") {
-      query.category = category;
+      query.category = { $regex: `^${category}$`, $options: "i" };
     }
 
     // FEATURE: Search by title using Regex

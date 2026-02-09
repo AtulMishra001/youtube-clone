@@ -38,7 +38,7 @@ const videoSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true, // Essential for the filter functionality on the Home Page
-      enum: ["Music", "Gaming", "News", "Sports", "Education", "Tech"], // Restricting to specific categories
+      enum: ["Music", "Gaming", "News", "Sports", "Education", "Tech", "Movie"], // Restricting to specific categories
     },
     // Reference to the Channel that uploaded this video
     channelId: {

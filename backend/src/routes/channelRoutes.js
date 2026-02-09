@@ -5,13 +5,14 @@ import {
   getChannelVideos,
   updateVideo,
   deleteVideo,
+  getChannel
 } from "../controllers/channelController.js";
 
 const router = express.Router();
 
 // Public: View videos of a specific channel
 router.get("/:channelId/videos", getChannelVideos);
-
+router.get("/:channelId", getChannel)
 // Protected: Only signed-in users can manage channels and videos
 router.post("/create", protect, createChannel);
 router.put("/video/:videoId", protect, updateVideo); // Update logic
