@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate} from "react-router-dom";
 import CommentSection from "../components/CommentSection";
 import api from "../utils/axios";
 import { format } from "timeago.js";
@@ -19,7 +19,7 @@ const VideoDetail = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchVideoData = async () => {
       setLoading(true);
@@ -65,11 +65,19 @@ const VideoDetail = () => {
           <div className="flex items-center gap-3">
             <img
               src={video.channelId?.channelAvatar}
-              className="w-10 h-10 rounded-full object-cover"
+              className="w-10 h-10 rounded-full object-cover cursor-pointer"
               alt="avatar"
+              onClick={() => {
+                navigate(`/channel/${video.channelId._id}`);
+              }}
             />
             <div className="flex flex-col">
-              <span className="font-bold text-base">
+              <span
+                className="font-bold text-base cursor-pointer"
+                onClick={() => {
+                  navigate(`/channel/${video.channelId._id}`);
+                }}
+              >
                 {video.channelId?.channelName}
               </span>
               <span className="text-yt-text-secondary text-xs">
@@ -122,7 +130,6 @@ const VideoDetail = () => {
         </div>
 
         <CommentSection videoId={video._id} />
-        {console.log(video)}
       </div>
 
       {/* RIGHT SECTION: Recommendations */}

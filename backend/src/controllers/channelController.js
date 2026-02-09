@@ -38,7 +38,9 @@ export const createChannel = async (req, res) => {
 export const getChannelVideos = async (req, res) => {
   try {
     const { channelId } = req.params;
-    const videos = await Video.find({ channelId });
+    const videos = await Video.find({ channelId })
+      .populate("channelId", "channelName channelAvatar")
+      .sort({ createdAt: -1 });
     res.status(200).json(videos);
   } catch (error) {
     res
