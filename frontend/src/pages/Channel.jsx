@@ -27,7 +27,6 @@ const Channel = () => {
         ]);
         setChannel(channelRes.data);
         setVideos(videosRes.data);
-        console.log(videosRes.data)
       } catch (err) {
         console.error("Error fetching channel data:", err);
       } finally {
@@ -38,35 +37,6 @@ const Channel = () => {
     fetchChannelData();
   }, [id]);
 
-  const handleEditVideo = async (video) => {
-    const newTitle = prompt("Enter new title:", video.title);
-    if (!newTitle) return;
-
-    try {
-      await api.put(`/videos/channel/video/${video._id}`, { title: newTitle });
-      setVideos(
-        videos.map((v) =>
-          v._id === video._id ? { ...v, title: newTitle } : v,
-        ),
-      );
-      alert("Video updated! ");
-    } catch (err) {
-      alert("Error updating video.");
-    }
-  };
-
-  const handleDeleteVideo = async (videoId) => {
-    if (window.confirm("Are you sure you want to delete this video? ")) {
-      try {
-        // PDF Route: channel/video/:videoId [cite: 182]
-        await api.delete(`/videos/channel/video/${videoId}`);
-        setVideos(videos.filter((v) => v._id !== videoId));
-        alert("Video deleted successfully.");
-      } catch (err) {
-        alert("Error deleting video: " + err.response?.data?.message);
-      }
-    }
-  };
 
   if (loading) return <Loader />;
   if (!channel)

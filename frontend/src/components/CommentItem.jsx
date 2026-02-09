@@ -10,7 +10,7 @@ const CommentItem = ({ comment, videoId, refreshComments }) => {
   const [editedText, setEditedText] = useState(comment.text);
   const [showOptions, setShowOptions] = useState(false);
 
-  const isOwner = user?._id === comment.userId?._id;
+  const isOwner = user?.id === comment.userId?._id;
 
   // Helper to safely get the initial
   const username = comment.userId?.username || "User";
