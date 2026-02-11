@@ -7,7 +7,6 @@ import { BsThreeDotsVertical } from "react-icons/bs"; // The "kebab" menu icon
 const VideoCard = ({ video, horizontal = false, isOwner = false }) => {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
-  console.log(isOwner)
   const handleManageClick = (e) => {
     e.preventDefault(); // Prevent navigating to video player
     navigate(`/manage/video/${video._id}`);

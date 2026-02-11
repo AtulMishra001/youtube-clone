@@ -368,7 +368,7 @@ Established in 1924 in Durham, North Carolina, Duke University is one of the wor
 export const seedDatabase = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ Connected to DB for seeding...");
+    console.log(" Connected to DB for seeding...");
 
     // Clear existing videos to avoid duplicates during testing
     await Video.deleteMany();
@@ -376,11 +376,10 @@ export const seedDatabase = async () => {
     // Inserting the organized Cloudinary data
     await Video.insertMany(sampleVideos);
 
-    console.log("🚀 Database Seeded Successfully!");
+    console.log(" Database Seeded Successfully!");
     process.exit();
   } catch (error) {
-    console.error("❌ Seeding Error:", error);
+    console.error("Seeding Error:", error);
     process.exit(1);
   }
 };
-

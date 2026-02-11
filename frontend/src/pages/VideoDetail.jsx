@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate} from "react-router-dom";
 import CommentSection from "../components/CommentSection";
+import { AuthContext } from "../context/AuthContext";
 import api from "../utils/axios";
 import { format } from "timeago.js";
 import {
@@ -19,7 +20,13 @@ const VideoDetail = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  //for managing likes/dislikes
+  const { user } = useContext(AuthContext);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isDisliked, setIsDisliked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchVideoData = async () => {
       setLoading(true);
@@ -40,6 +47,46 @@ const VideoDetail = () => {
     fetchVideoData();
   }, [id]);
 
+  useEffect(() => {
+    if (video && user) {
+      // Checking if user ID exists in the likes/dislikes arrays from backend
+      setIsLiked(video.likes?.includes(user.id));
+      setIsDisliked(video.dislikes?.includes(user.id));
+      setLikesCount(video.likes?.length || 0);
+    }
+  }, [video, user]);
+
+  const handleLike = async () => {
+    if (!user) return alert("Please login to like videos");
+    try {
+      // API call to your backend route (e.g., /videos/:id/like)
+      const { data } = await api.put(`/videos/${video._id}/like`);
+
+      // Update local state based on response
+      setIsLiked(data.isLiked);
+      setIsDisliked(false); // Dislike is removed if you like a video
+      setLikesCount(data.likesCount);
+    } catch (err) {
+      console.error("Error liking video", err);
+    }
+  };
+
+  const handleDislike = async () => {
+    if (!user) return alert("Please login to dislike videos");
+    try {
+      const { data } = await api.put(`/videos/${video._id}/dislike`);
+
+      setIsDisliked(data.isDisliked);
+      if (data.isDisliked && isLiked) {
+        setLikesCount((prev) => prev - 1);
+      }
+      setIsLiked(false);
+    } catch (err) {
+      console.error("Error disliking video", err);
+    }
+  };
+
+
   if (loading) return <Loader />;
   if (!video) return <div className="text-center mt-10">Video not found.</div>;
 
@@ -53,7 +100,7 @@ const VideoDetail = () => {
             src={video.videoUrl}
             controls
             autoPlay
-            controlsList="nodownload" 
+            controlsList="nodownload"
             onContextMenu={(e) => e.preventDefault()}
             className="w-full h-full object-contain"
           />
@@ -94,18 +141,37 @@ const VideoDetail = () => {
           <div className="flex items-center gap-2">
             {/* LIKE/DISLIKE GROUP */}
             <div className="flex items-center bg-yt-light-gray rounded-full">
-              <button className="flex items-center gap-2 px-4 py-2 hover:bg-yt-border rounded-l-full border-r border-yt-border transition-colors">
-                <AiOutlineLike size={22} />
-                <span className="text-sm font-medium">
-                  {video.likes?.length || 0}
-                </span>
+              <button
+                onClick={handleLike}
+                className="flex items-center gap-2 px-4 py-2 hover:bg-yt-border rounded-l-full border-r border-yt-border transition-colors"
+              >
+                {isLiked ? (
+                  <AiFillLike size={22} className="text-white" />
+                ) : (
+                  <AiOutlineLike size={22} />
+                )}
+                <span className="text-sm font-medium">{likesCount}</span>
               </button>
-              <button className="px-4 py-2 hover:bg-yt-border rounded-r-full transition-colors">
-                <AiOutlineDislike size={22} />
+
+              <button
+                onClick={handleDislike}
+                className="px-4 py-2 hover:bg-yt-border rounded-r-full transition-colors"
+              >
+                {isDisliked ? (
+                  <AiFillDislike size={22} className="text-white" />
+                ) : (
+                  <AiOutlineDislike size={22} />
+                )}
               </button>
             </div>
+
             {/* SHARE BUTTON */}
-            <button className="flex items-center gap-2 bg-yt-light-gray px-4 py-2 rounded-full hover:bg-yt-border transition-colors">
+            <button
+              onClick={() =>
+                navigator.clipboard.writeText(window.location.href)
+              }
+              className="flex items-center gap-2 bg-yt-light-gray px-4 py-2 rounded-full hover:bg-yt-border transition-colors"
+            >
               <PiShareFatThin size={22} />
               <span className="text-sm font-medium">Share</span>
             </button>
