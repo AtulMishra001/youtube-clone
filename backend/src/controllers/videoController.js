@@ -1,5 +1,5 @@
 import { Video } from "../models/Video.js";
-
+import { Channel } from "../models/Channel.js";
 /**
  * Fetch all videos for the Home Page.
  * I've implemented dynamic filtering by category and title search
@@ -64,6 +64,69 @@ export const getVideoById = async (req, res) => {
   }
 };
 
+/**
+ * Uploads a new video 
+ * I am automatically linking the video to the logged-in user's channel 
+ * to ensure data consistency.
+ */
+export const addVideo = async (req, res) => {
+  try {
+    const { title, description, videoUrl, thumbnailUrl, category, channelId } = req.body;
+
+    // 1. Basic Validation
+    if (!title) {
+      return res.status(400).json({ message: "Title required." });
+    }else if(!videoUrl){
+      return res.status(400).json({ message: "Video URL is required." });
+    }else if(!thumbnailUrl) {
+      return res.status(400).json({ message: "Thumbnail URL is required." });
+    }else if(!category) {
+      return res.status(400).json({ message: "Category is required." });
+    }
+
+    // 2. Find the Channel
+    // If frontend sends channelId, use it. Otherwise, find the user's first channel.
+    let targetChannel;
+    
+    if (channelId) {
+      targetChannel = await Channel.findById(channelId);
+    } else {
+      targetChannel = await Channel.findOne({ owner: req.user._id });
+    }
+
+    if (!targetChannel) {
+      return res.status(400).json({ 
+        message: "You must create a channel before uploading a video." 
+      });
+    }
+
+    // 3. Verify Ownership (Security)
+    // Ensure the logged-in user actually owns the channel they are uploading to
+    if (targetChannel.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "You are not authorized to upload to this channel." });
+    }
+
+    // 4. Create Video Document
+    const newVideo = await Video.create({
+      channelId: targetChannel._id, // The channel it belongs to
+      uploader: req.user._id,
+      title,
+      description,
+      videoUrl,
+      thumbnailUrl,
+      category,
+    });
+
+    // 5. Update Channel's Video List
+    // We push the new video ID into the Channel's 'videos' array
+    targetChannel.videos.push(newVideo._id);
+    await targetChannel.save();
+
+    res.status(201).json(newVideo);
+  } catch (error) {
+    res.status(500).json({ message: "Error uploading video", error: error.message });
+  }
+};
 
 /**
  * Logic to handle video likes.
@@ -100,8 +163,6 @@ export const likeVideo = async (req, res) => {
     res.status(500).json({ message: "Error processing like", error: error.message });
   }
 };
-
-
 
 /**
  * Logic to handle video dislikes.
