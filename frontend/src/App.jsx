@@ -11,6 +11,7 @@ import Channel from "./pages/Channel";
 import ManageVideo from "./pages/ManageVideo";
 import MyChannels from "./pages/MyChannels";
 import NotFound from "./pages/NotFound"; // Import the new component
+import UploadVideo from "./pages/UploadVideo";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -40,7 +41,7 @@ function App() {
                 <Route path="/channel/:id" element={<Channel />} />
                 <Route path="/manage/video/:id" element={<ManageVideo />} />
                 <Route path="/my-channels" element={<MyChannels />} />
-
+                <Route path="/upload" element={<UploadVideo />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
