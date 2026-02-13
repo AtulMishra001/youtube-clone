@@ -10,7 +10,7 @@ const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Requirement: Filter buttons for categories
-  const categories = ["All", "Education", "Music", "Movie", "Gaming", "Tech"];
+  const categories = ["All", "Education", "Music", "Movie", "Gaming", "Tech", "News", "Sports"];
   const currentCategory = searchParams.get("category") || "All";
   const searchQuery = searchParams.get("search") || "";
 
