@@ -1,6 +1,6 @@
 import { Channel } from "../models/Channel.js";
 import { Video } from "../models/Video.js";
-
+import { Subscription } from "../models/Subscription.js"
 /**
  * Creates a new channel for the authenticated user.
  * I've implemented this to ensure that a user must be logged in
@@ -135,5 +135,66 @@ export const getMyChannels = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error fetching channels", error: error.message });
+  }
+};
+
+
+// 1. Toggle Subscribe / Unsubscribe
+export const toggleSubscription = async (req, res) => {
+  try {
+    const { channelId } = req.params;
+    const userId = req.user._id;
+
+    const existingSub = await Subscription.findOne({ 
+      subscriber: userId, 
+      channel: channelId 
+    });
+
+    if (existingSub) {
+      await Subscription.findByIdAndDelete(existingSub._id);
+      // Update subscriber count on Channel model if you added that field
+      await Channel.findByIdAndUpdate(channelId, { $inc: { subscribers: -1 } });
+      return res.status(200).json({ message: "Unsubscribed", subscribed: false });
+    } else {
+      await Subscription.create({ subscriber: userId, channel: channelId });
+      await Channel.findByIdAndUpdate(channelId, { $inc: { subscribers: 1 } });
+      return res.status(200).json({ message: "Subscribed", subscribed: true });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// 2. Get Videos from Subscribed Channels (For the Subscriptions Page)
+export const getSubscribedVideos = async (req, res) => {
+  try {
+    // Step A: Find all channels the logged-in user subscribes to
+    const subscriptions = await Subscription.find({ subscriber: req.user._id });
+    
+    // Step B: Extract just the Channel IDs into a simple array
+    const channelIds = subscriptions.map((sub) => sub.channel);
+
+    // Step C: Find videos where the 'channelId' matches ANY in our list
+    const videos = await Video.find({ channelId: { $in: channelIds } })
+      .populate("channelId", "channelName channelAvatar")
+      .sort({ createdAt: -1 }); // Newest first
+
+    res.status(200).json(videos);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// 3. Helper to check subscription status 
+export const checkSubscriptionStatus = async (req, res) => {
+  try {
+    const { channelId } = req.params;
+    const isSubscribed = await Subscription.exists({ 
+      subscriber: req.user._id, 
+      channel: channelId 
+    });
+    res.status(200).json({ subscribed: !!isSubscribed });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
