@@ -198,3 +198,7 @@ export const checkSubscriptionStatus = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const getSubscribedChannels = async (req, res)=> {
+  res.status(200).json({message: "this is working"})
+}
