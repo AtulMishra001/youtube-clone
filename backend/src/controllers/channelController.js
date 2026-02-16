@@ -200,5 +200,17 @@ export const checkSubscriptionStatus = async (req, res) => {
 };
 
 export const getSubscribedChannels = async (req, res)=> {
-  res.status(200).json({message: "this is working"})
+  try {
+    const channels = await Subscription.find({
+      subscriber: req.user._id,
+    }).populate("channel", "channelName channelAvatar");
+    if(channels.length <= 0) {
+      res.status(404).json({message: "No Channel is subscribed."});
+    }else {
+      res.status(200).json(channels)
+    }
+
+  } catch (error) {
+    console.log("ERROR: ", error);
+  }
 }

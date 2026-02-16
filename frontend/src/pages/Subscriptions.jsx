@@ -25,9 +25,9 @@ const Subscriptions = () => {
           api.get("/channel/subscriptions/videos"),
           api.get("/channel/subscriptions/channels"),
         ]);
-
         setVideos(videosRes.data);
-        setChannels(channelsRes.data);
+        const extractedChannels = channelsRes.data.map((sub) => sub.channel);
+        setChannels(extractedChannels);
       } catch (err) {
         console.error("Fetch failed", err);
       } finally {
