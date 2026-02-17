@@ -8,6 +8,7 @@ import {
 } from "react-icons/ai";
 import { PiShareFatThin } from "react-icons/pi";
 import { AuthContext } from "../context/AuthContext";
+import { format } from "timeago.js";
 import api from "../utils/axios";
 import Loader from "../components/Loader";
 import VideoCard from "../components/VideoCard";
@@ -51,8 +52,8 @@ const VideoDetail = () => {
         // 2. Sync User Interaction States (Like, Dislike, Subscribe)
         if (user && videoData) {
           // Like/Dislike Status
-          setIsLiked(videoData.likes?.includes(user._id));
-          setIsDisliked(videoData.dislikes?.includes(user._id));
+          setIsLiked(videoData.likes?.includes(user.id));
+          setIsDisliked(videoData.dislikes?.includes(user.id));
 
           // Subscribe Status (using the route we created earlier)
           try {
@@ -79,7 +80,7 @@ const VideoDetail = () => {
   const handleLike = async () => {
     if (!user) return alert("Please login to like videos");
     try {
-      const { data } = await api.post(`/videos/${id}/like`);
+      const { data } = await api.put(`/videos/${id}/like`);
       setIsLiked(data.isLiked);
       setIsDisliked(false);
       setLikesCount(data.likesCount);
@@ -91,7 +92,7 @@ const VideoDetail = () => {
   const handleDislike = async () => {
     if (!user) return alert("Please login to dislike videos");
     try {
-      const { data } = await api.post(`/videos/${id}/dislike`);
+      const { data } = await api.put(`/videos/${id}/dislike`);
       setIsDisliked(data.isDisliked);
       if (data.isDisliked && isLiked) setLikesCount((prev) => prev - 1);
       setIsLiked(false);
@@ -223,7 +224,7 @@ const VideoDetail = () => {
         <div className="bg-yt-light-gray mt-4 p-3 rounded-xl text-sm cursor-pointer hover:bg-yt-border transition-colors">
           <div className="flex gap-2 font-bold mb-1">
             <span>{video.views?.toLocaleString()} views</span>
-            <span>{new Date(video.createdAt).toLocaleDateString()}</span>
+            <span>{format(video.createdAt)}</span>
           </div>
           <p className="whitespace-pre-wrap">{video.description}</p>
         </div>
@@ -235,9 +236,9 @@ const VideoDetail = () => {
       </div>
 
       {/* RIGHT SECTION: Recommendations */}
-      <div className="lg:w-[400px] flex flex-col gap-4">
+      <div className="lg:w-100 flex flex-col gap-4">
         {recommendations.map((rec) => (
-          <VideoCard key={rec._id} video={rec} type="horizontal" />
+          <VideoCard key={rec._id} video={rec} horizontal={true} />
         ))}
       </div>
     </div>

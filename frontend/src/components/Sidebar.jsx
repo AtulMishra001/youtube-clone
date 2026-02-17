@@ -65,7 +65,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         {/* SECTION 1: Main Navigation */}
         <div className="flex flex-col gap-1 py-3 border-b border-yt-border">
           <SidebarItem icon={MdHome} label="Home" path="/" />
-          <SidebarItem icon={SiYoutubeshorts} label="Shorts" path="/shorts" />
+
           <SidebarItem
             icon={MdOutlineSubscriptions}
             label="Subscriptions"
@@ -80,21 +80,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           >
             You {">"}
           </div>
-          <SidebarItem
-            icon={MdOutlineVideoLibrary}
-            label="Library"
-            path="/library"
-          />
-          <SidebarItem
-            icon={MdOutlineHistory}
-            label="History"
-            path="/history"
-          />
-          <SidebarItem
-            icon={MdOutlineWatchLater}
-            label="Watch Later"
-            path="/watch-later"
-          />
+         
+         
         </div>
 
         {/* FOOTER: Required for professional look & feel */}

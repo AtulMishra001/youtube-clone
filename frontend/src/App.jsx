@@ -30,9 +30,11 @@ function App() {
             <main
               className={`flex-1 overflow-y-auto bg-yt-black p-4 transition-all duration-300
                 ml-0 
+                
                 ${isSidebarOpen ? "md:ml-60" : "md:ml-16"}
               `}
             >
+              {/**All Rputes for different pages */}
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/video/:id" element={<VideoDetail />} />
@@ -43,7 +45,7 @@ function App() {
                 <Route path="/my-channels" element={<MyChannels />} />
                 <Route path="/upload" element={<UploadVideo />} />
                 <Route path="/subscriptions" element={<Subscriptions />}/>
-                <Route path="*" element={<NotFound />} />
+                <Route path="*" element={<NotFound />} /> {/** handeling the all not Found routes */}
               </Routes>
             </main>
           </div>

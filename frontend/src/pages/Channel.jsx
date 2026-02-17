@@ -77,7 +77,7 @@ const Channel = () => {
           <p className="text-yt-text-secondary text-sm mt-1 max-w-2xl line-clamp-2">
             {channel.description}
           </p>
-
+          {/**Conditional rendering of subscribe button based on ownership of channel */}
           <div className="flex gap-3 mt-2">
             {isOwner ? (
               <button className="bg-yt-light-gray hover:bg-yt-border text-white px-4 py-2 rounded-full text-sm font-bold transition-colors">

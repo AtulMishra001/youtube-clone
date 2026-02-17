@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import api from "../utils/axios";
 import CommentItem from "./CommentItem";
 import Loader from "./Loader"; // Optional: if you want a small spinner for comments
+import { Link } from "react-router-dom";
 
 const CommentSection = ({ videoId }) => {
   const { user } = useContext(AuthContext);
@@ -70,9 +71,11 @@ const CommentSection = ({ videoId }) => {
           </form>
         </div>
       ) : (
+        <Link to="/login">
         <p className="text-sm text-yt-text-secondary mb-8 underline cursor-pointer" onClick={() => navigate("/login")}>
           Sign in to add a comment.
         </p>
+        </Link>
       )}
 
       {/* LIST OF COMMENTS */}
