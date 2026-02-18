@@ -13,9 +13,9 @@ const Channel = () => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Videos");
-
+  const [isSubscribed, setIsSubscribed] = useState(false);
   const isOwner = user?.id === channel?.owner;
-    console.log(isOwner)
+
   useEffect(() => {
     const fetchChannelData = async () => {
       setLoading(true);
@@ -37,6 +37,51 @@ const Channel = () => {
     fetchChannelData();
   }, [id]);
 
+  useEffect(() => {
+    if (user && channel) {
+      const checkStatus = async () => {
+        try {
+          const { data } = await api.get(
+            `/channel/subscribe-status/${channel._id}`,
+          );
+          setIsSubscribed(data.subscribed);
+          setSubscribersCount(channel.subscribers); // Sync count
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      checkStatus();
+    }
+  }, [channel, user]);
+
+    const handleSubscribe = async () => {
+      if (!user) return alert("Please login to subscribe");
+
+      // Prevent subscribing to your own channel
+      if (channel.owner === user._id) {
+        return alert("You cannot subscribe to your own channel");
+      }
+
+      try {
+        // Correct Route: GET /channels/subscribe/:id
+        const { data } = await api.get(
+          `/channel/togelSubscription/${channel._id}`,
+        );
+
+        // Update State based on backend response
+        setIsSubscribed(data.subscribed);
+
+        // Optimistically update the subscriber count on the UI
+        if (data.subscribed) {
+          setSubscribersCount((prev) => prev + 1);
+        } else {
+          setSubscribersCount((prev) => prev - 1);
+        }
+      } catch (err) {
+        console.error("Subscribe failed", err);
+        alert("Failed to update subscription");
+      }
+    };
 
   if (loading) return <Loader />;
   if (!channel)
@@ -84,8 +129,15 @@ const Channel = () => {
                 Customize channel
               </button>
             ) : (
-              <button className="bg-white text-black px-6 py-2 rounded-full text-sm font-bold hover:bg-[#d9d9d9] transition-colors">
-                Subscribe
+              <button
+                onClick={handleSubscribe}
+                className={`px-6 py-2 rounded-full text-sm font-bold transition-colors ${
+                  isSubscribed
+                    ? "bg-yt-light-gray text-white hover:bg-yt-border" // "Subscribed" Style
+                    : "bg-white text-black hover:bg-[#d9d9d9]" // "Subscribe" Style
+                }`}
+              >
+                {isSubscribed ? "Subscribed" : "Subscribe"}
               </button>
             )}
           </div>
@@ -94,7 +146,7 @@ const Channel = () => {
 
       {/* 3. TABS NAVIGATION */}
       <div className="px-4 md:px-16 border-b border-yt-border flex gap-8">
-        {["Home", "Videos", "Playlists", "About"].map((tab) => (
+        {["Videos", "About"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -116,11 +168,11 @@ const Channel = () => {
             {videos.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8">
                 {videos.map((video) => (
-                <VideoCard 
-                    key={video._id} 
-                    video={video} 
+                  <VideoCard
+                    key={video._id}
+                    video={video}
                     isOwner={isOwner} // Only show if user owns the channel
-                />
+                  />
                 ))}
               </div>
             ) : (

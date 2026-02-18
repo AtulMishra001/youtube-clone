@@ -118,7 +118,7 @@ const Subscriptions = () => {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center mt-20 opacity-60">
-          <p>No videos found for this selection.</p>
+          <p>Subscribe to channels to see Videos here.</p>
         </div>
       )}
     </div>

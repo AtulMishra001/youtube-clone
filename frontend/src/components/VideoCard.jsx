@@ -36,7 +36,6 @@ const VideoCard = ({ video, horizontal = false, isOwner = false }) => {
         {/* METADATA */}
         <div className="flex gap-3 items-start pr-6 relative">
           {" "}
-          {/* pr-6 makes room for the dots */}
           {!horizontal && (
             <img
               src={
@@ -55,10 +54,12 @@ const VideoCard = ({ video, horizontal = false, isOwner = false }) => {
               {video.title}
             </h3>
 
+              <Link to={`/channel/${video.channelId._id}`}>
             <div className="text-yt-text-secondary text-[12px] flex items-center gap-1 mt-1">
-              {video.channelId?.channelName}{" "}
-              <FaCheckCircle className="text-[10px]" />
+                {video.channelId?.channelName}{" "}
+                <FaCheckCircle className="text-[10px]" />
             </div>
+              </Link>
             <div className="text-yt-text-secondary text-[12px]">
               {video.views?.toLocaleString()} views • {format(video.createdAt)}
             </div>

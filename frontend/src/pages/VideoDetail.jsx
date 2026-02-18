@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
   AiOutlineLike,
   AiFillLike,
@@ -162,9 +162,11 @@ const VideoDetail = () => {
               alt="avatar"
             />
             <div className="flex flex-col">
+              <Link to={`/channel/${video.channelId._id}`}>
               <span className="font-bold text-base">
                 {video.channelId?.channelName}
               </span>
+              </Link>
               <span className="text-yt-text-secondary text-xs">
                 {subscribersCount} subscribers
               </span>
