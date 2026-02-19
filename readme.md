@@ -1,9 +1,9 @@
 # YouTube Clone - MERN Stack Capstone Project
 
-## 📽️ Project Overview
+## Project Overview
 This project is a full-stack YouTube clone built using the MERN stack (MongoDB, Express, React, Node.js). It replicates core video-sharing functionalities, including user authentication, video playback, channel management, and real-time interaction through comments and likes. The application is designed to be fully responsive, ensuring a high-quality user experience across desktop, tablet, and mobile devices.
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 ### Frontend
 * **React.js (Vite)**: For building the user interface with high performance.
@@ -18,26 +18,32 @@ This project is a full-stack YouTube clone built using the MERN stack (MongoDB, 
 * **JWT (JSON Web Tokens)**: For secure, token-based user authentication.
 * **ES Modules**: Modern JavaScript syntax for clean and maintainable backend code.
 
-## 🚀 Features
+## Features
 * **Authentication**: JWT-based login and signup with secure password handling.
 * **Home Page**: Dynamic video grid with title search and category-based filtering.
 * **Responsive Navigation**: Toggleable sidebar and a mobile-optimized search overlay.
 * **Video Player**: Seamless playback with like/dislike interactions and view counting.
+* **Channel Page**: Ability to 
+create/edit/delete videos 
 * **Comment System**: Full CRUD (Create, Read, Update, Delete) functionality for comments.
 * **My Channels**: Users can create channels and manage them.
+* **Subscription Page**: User can see videos from subscribed channels.
 
 
-## 📂 Folder Structure
+## Folder Structure
 ```bash
 /youtube-clone
 ├── /backend
-│   ├── /controllers    # API logic (auth, video, channel, comment)
-│   ├── /models         # Database schemas (User, Video, Channel, Comment)
-│   ├── /routes         # Express endpoints
-│   ├── /middleware     # Authentication guards (protect)
-│   └── server.js       # Main entry point
+│   ├── /src
+│   │    ├── /config         # Database Connection
+│   │    ├── /controllers    # API logic (auth, video, channel, comment)
+│   │    ├── /models         # Database schemas (User, Video, Channel, Comment)
+│   │    ├── /routes         # Express endpoints
+│   │    ├── /middleware     # Authentication guards (protect)
+│   └── server.js            # Main entry point
 └── /frontend
     ├── /src
+    │   ├── /assets     # YouTube Icone
     │   ├── /components # Navbar, Sidebar, VideoCard, Loader, etc.
     │   ├── /context    # AuthContext for global state
     │   ├── /pages      # Home, VideoDetail, MyChannels, ManageVideo, etc.
@@ -46,7 +52,7 @@ This project is a full-stack YouTube clone built using the MERN stack (MongoDB, 
     └── vite.config.js
 ```
 
-## ⚙️ Setup and Installation
+## Setup and Installation
 ### Prerequisites
 1. Node.js installed
 2. MongoDB Atlas account (or local MongoDB instance)
@@ -62,7 +68,7 @@ npm install
 # JWT_SECRET=your_jwt_secret
 npm start
 ```
-
+Do create a .env file in backend folder and store PORT, MONGO_URI, JWT_SECRET in it before running backend.
 ## Frontend Installation
 
 ```
