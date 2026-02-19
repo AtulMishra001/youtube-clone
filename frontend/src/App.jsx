@@ -28,7 +28,7 @@ function App() {
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
             <main
-              className={`flex-1 overflow-y-auto bg-yt-black p-4 transition-all duration-300
+              className={`flex-1 overflow-y-auto bg-yt-black p-2 transition-all duration-300
                 ml-0 
                 
                 ${isSidebarOpen ? "md:ml-60" : "md:ml-16"}

@@ -12,7 +12,7 @@ import { format } from "timeago.js";
 import api from "../utils/axios";
 import Loader from "../components/Loader";
 import VideoCard from "../components/VideoCard";
-import CommentSection from "../components/CommentSection"; // Ensure you have this component
+import CommentSection from "../components/CommentSection";
 
 const VideoDetail = () => {
   const { id } = useParams();
@@ -33,29 +33,22 @@ const VideoDetail = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // 1. Fetch Video Data & Recommendations
         const [videoRes, recsRes] = await Promise.all([
           api.get(`/videos/${id}`),
-          api.get("/videos"), // Fetching all videos for recommendations
+          api.get("/videos"),
         ]);
 
         const videoData = videoRes.data;
         setVideo(videoData);
         setLikesCount(videoData.likes?.length || 0);
-
-        // Handle subscriber count safely
         setSubscribersCount(videoData.channelId?.subscribers || 0);
-
-        // Filter out current video from recommendations
         setRecommendations(recsRes.data.filter((v) => v._id !== id));
 
-        // 2. Sync User Interaction States (Like, Dislike, Subscribe)
         if (user && videoData) {
-          // Like/Dislike Status
-          setIsLiked(videoData.likes?.includes(user.id));
-          setIsDisliked(videoData.dislikes?.includes(user.id));
+          // Changed user.id to user._id to match MongoDB standard safely
+          setIsLiked(videoData.likes?.includes(user._id));
+          setIsDisliked(videoData.dislikes?.includes(user._id));
 
-          // Subscribe Status (using the route we created earlier)
           try {
             const subRes = await api.get(
               `/channel/subscribe-status/${videoData.channelId._id}`,
@@ -76,7 +69,6 @@ const VideoDetail = () => {
   }, [id, user]);
 
   // --- HANDLERS ---
-
   const handleLike = async () => {
     if (!user) return alert("Please login to like videos");
     try {
@@ -103,8 +95,6 @@ const VideoDetail = () => {
 
   const handleSubscribe = async () => {
     if (!user) return alert("Please login to subscribe");
-
-    // Prevent subscribing to your own channel
     if (video.channelId.owner === user._id) {
       return alert("You cannot subscribe to your own channel");
     }
@@ -113,10 +103,7 @@ const VideoDetail = () => {
       const { data } = await api.get(
         `channel/togelSubscription/${video.channelId._id}`,
       );
-      console.log(data)
       setIsSubscribed(data.subscribed);
-
-      // Optimistically update subscriber count on UI
       if (data.subscribed) {
         setSubscribersCount((prev) => prev + 1);
       } else {
@@ -133,11 +120,12 @@ const VideoDetail = () => {
     return <div className="text-center mt-10 text-white">Video not found.</div>;
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 px-4 py-6 min-h-screen bg-yt-black text-white">
+    // REMOVED mobile padding (px-4 py-6) here. Added it only for large screens (lg:p-6 lg:px-8)
+    <div className="flex flex-col lg:flex-row gap-6 lg:p-6 lg:px-8 min-h-screen bg-yt-black text-white">
       {/* LEFT SECTION: Player, Info, Comments */}
       <div className="flex-1">
-        {/* Video Player */}
-        <div className="aspect-video w-full bg-black rounded-xl overflow-hidden shadow-lg border border-yt-border">
+        {/* Video Player - Edge to edge on mobile, rounded with border on desktop */}
+        <div className="aspect-video w-full bg-black lg:rounded-xl overflow-hidden shadow-lg lg:border lg:border-yt-border">
           <video
             src={video.videoUrl}
             controls
@@ -147,98 +135,100 @@ const VideoDetail = () => {
           />
         </div>
 
-        <h1 className="text-xl font-bold mt-4 line-clamp-2">{video.title}</h1>
+        {/* INFO WRAPPER - Padding added back here for mobile text content */}
+        <div className="px-4 lg:px-0 mt-4">
+          <h1 className="text-xl font-bold line-clamp-2">{video.title}</h1>
 
-        {/* Channel & Buttons Row */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-3">
-          {/* Channel Info & Subscribe */}
-          <div className="flex items-center gap-3">
-            <img
-              src={
-                video.channelId?.channelAvatar ||
-                "https://via.placeholder.com/40"
-              }
-              className="w-10 h-10 rounded-full object-cover border border-yt-border"
-              alt="avatar"
-            />
-            <div className="flex flex-col">
-              <Link to={`/channel/${video.channelId._id}`}>
-              <span className="font-bold text-base">
-                {video.channelId?.channelName}
-              </span>
-              </Link>
-              <span className="text-yt-text-secondary text-xs">
-                {subscribersCount} subscribers
-              </span>
-            </div>
+          {/* Channel & Buttons Row */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-3">
+            <div className="flex items-center gap-3">
+              <img
+                src={
+                  video.channelId?.channelAvatar ||
+                  "https://via.placeholder.com/40"
+                }
+                className="w-10 h-10 rounded-full object-cover border border-yt-border"
+                alt="avatar"
+              />
+              <div className="flex flex-col">
+                <Link to={`/channel/${video.channelId._id}`}>
+                  <span className="font-bold text-base">
+                    {video.channelId?.channelName}
+                  </span>
+                </Link>
+                <span className="text-yt-text-secondary text-xs">
+                  {subscribersCount} subscribers
+                </span>
+              </div>
 
-            <button
-              onClick={handleSubscribe}
-              className={`ml-4 px-4 py-2 rounded-full font-bold text-sm transition-colors ${
-                isSubscribed
-                  ? "bg-yt-light-gray text-white hover:bg-yt-border" // Subscribed State (Grey)
-                  : "bg-white text-black hover:bg-[#d9d9d9]" // Unsubscribed State (White)
-              }`}
-            >
-              {isSubscribed ? "Subscribed" : "Subscribe"}
-            </button>
-          </div>
-
-          {/* Actions: Like, Dislike, Share */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center bg-yt-light-gray rounded-full">
               <button
-                onClick={handleLike}
-                className="flex items-center gap-2 px-4 py-2 hover:bg-yt-border rounded-l-full border-r border-yt-border transition-colors"
+                onClick={handleSubscribe}
+                className={`ml-4 px-4 py-2 rounded-full font-bold text-sm transition-colors ${
+                  isSubscribed
+                    ? "bg-yt-light-gray text-white hover:bg-yt-border"
+                    : "bg-white text-black hover:bg-[#d9d9d9]"
+                }`}
               >
-                {isLiked ? (
-                  <AiFillLike size={22} />
-                ) : (
-                  <AiOutlineLike size={22} />
-                )}
-                <span className="text-sm font-medium">{likesCount}</span>
-              </button>
-              <button
-                onClick={handleDislike}
-                className="px-4 py-2 hover:bg-yt-border rounded-r-full transition-colors"
-              >
-                {isDisliked ? (
-                  <AiFillDislike size={22} />
-                ) : (
-                  <AiOutlineDislike size={22} />
-                )}
+                {isSubscribed ? "Subscribed" : "Subscribe"}
               </button>
             </div>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                alert("Link copied!");
-              }}
-              className="flex items-center gap-2 bg-yt-light-gray px-4 py-2 rounded-full hover:bg-yt-border transition-colors"
-            >
-              <PiShareFatThin size={22} />
-              <span className="text-sm font-medium">Share</span>
-            </button>
-          </div>
-        </div>
 
-        {/* Description Box */}
-        <div className="bg-yt-light-gray mt-4 p-3 rounded-xl text-sm cursor-pointer hover:bg-yt-border transition-colors">
-          <div className="flex gap-2 font-bold mb-1">
-            <span>{video.views?.toLocaleString()} views</span>
-            <span>{format(video.createdAt)}</span>
+            {/* Actions: Like, Dislike, Share */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center bg-yt-light-gray rounded-full">
+                <button
+                  onClick={handleLike}
+                  className="flex items-center gap-2 px-4 py-2 hover:bg-yt-border rounded-l-full border-r border-yt-border transition-colors"
+                >
+                  {isLiked ? (
+                    <AiFillLike size={22} />
+                  ) : (
+                    <AiOutlineLike size={22} />
+                  )}
+                  <span className="text-sm font-medium">{likesCount}</span>
+                </button>
+                <button
+                  onClick={handleDislike}
+                  className="px-4 py-2 hover:bg-yt-border rounded-r-full transition-colors"
+                >
+                  {isDisliked ? (
+                    <AiFillDislike size={22} />
+                  ) : (
+                    <AiOutlineDislike size={22} />
+                  )}
+                </button>
+              </div>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  alert("Link copied!");
+                }}
+                className="flex items-center gap-2 bg-yt-light-gray px-4 py-2 rounded-full hover:bg-yt-border transition-colors"
+              >
+                <PiShareFatThin size={22} />
+                <span className="text-sm font-medium">Share</span>
+              </button>
+            </div>
           </div>
-          <p className="whitespace-pre-wrap">{video.description}</p>
-        </div>
 
-        {/* Comment Section (Make sure you have this component) */}
-        <div className="mt-6">
-          <CommentSection videoId={video._id} />
+          {/* Description Box */}
+          <div className="bg-yt-light-gray mt-4 p-3 rounded-xl text-sm cursor-pointer hover:bg-yt-border transition-colors">
+            <div className="flex gap-2 font-bold mb-1">
+              <span>{video.views?.toLocaleString()} views</span>
+              <span>{format(video.createdAt)}</span>
+            </div>
+            <p className="whitespace-pre-wrap">{video.description}</p>
+          </div>
+
+          {/* Comment Section */}
+          <div className="mt-6">
+            <CommentSection videoId={video._id} />
+          </div>
         </div>
       </div>
 
       {/* RIGHT SECTION: Recommendations */}
-      <div className="lg:w-100 flex flex-col gap-4">
+      <div className="px-4 lg:px-0 lg:w-100 flex flex-col gap-4 pb-8 lg:pb-0">
         {recommendations.map((rec) => (
           <VideoCard key={rec._id} video={rec} horizontal={true} />
         ))}

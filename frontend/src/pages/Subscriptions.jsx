@@ -44,7 +44,6 @@ const Subscriptions = () => {
       ? videos
       : videos.filter((video) => video.channelId._id === selectedChannelId);
 
-  if (loading) return <Loader />;
 
   if (!user)
     return (
@@ -59,6 +58,8 @@ const Subscriptions = () => {
         </p>
       </div>
     );
+  if (loading) return <Loader />;
+
 
   return (
     <div className="px-4 py-6 text-white min-h-screen">

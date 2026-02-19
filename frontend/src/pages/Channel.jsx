@@ -71,12 +71,7 @@ const Channel = () => {
         // Update State based on backend response
         setIsSubscribed(data.subscribed);
 
-        // Optimistically update the subscriber count on the UI
-        if (data.subscribed) {
-          setSubscribersCount((prev) => prev + 1);
-        } else {
-          setSubscribersCount((prev) => prev - 1);
-        }
+       
       } catch (err) {
         console.error("Subscribe failed", err);
         alert("Failed to update subscription");
