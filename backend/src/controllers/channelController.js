@@ -5,6 +5,7 @@ import { Subscription } from "../models/Subscription.js"
  * Creates a new channel for the authenticated user.
  * I've implemented this to ensure that a user must be logged in
  * before they can establish a channel identity.
+ * api/channel/create
  */
 export const createChannel = async (req, res) => {
   try {
@@ -34,6 +35,7 @@ export const createChannel = async (req, res) => {
 /**
  * Fetches all videos belonging to a specific channel.
  * This satisfies the requirement to display channel-specific content.
+ * api/channel/:channelId/videos
  */
 export const getChannelVideos = async (req, res) => {
   try {
@@ -52,6 +54,7 @@ export const getChannelVideos = async (req, res) => {
 /**
  * Updates video metadata (Title, Description, etc.).
  * I've added a security check to ensure only the uploader can edit the video.
+ * api/channel/video/:videoId
  */
 export const updateVideo = async (req, res) => {
   try {
@@ -82,7 +85,8 @@ export const updateVideo = async (req, res) => {
 
 /**
  * Deletes a video from the database.
- * This fulfills the requirement for full CRUD operations on the channel page.
+ * This fulfills the requirement for full CRUD operations on the channel page
+ * api/channel/video/:videoId
  */
 export const deleteVideo = async (req, res) => {
   try {
@@ -107,6 +111,10 @@ export const deleteVideo = async (req, res) => {
   }
 };
 
+/**
+ * returns the details of a single channel based on channelId provided in the URL.
+ * api/channel/:channelId
+ */
 export const getChannel = async (req, res) => {
   try {
     const { channelId } = req.params;
@@ -126,6 +134,9 @@ export const getChannel = async (req, res) => {
   }
 };
 
+/** Returns a list of channels owned by the loged in user
+ * api/channel/my-channels
+ */
 export const getMyChannels = async (req, res) => {
   try {
     // req.user._id comes from your 'protect' middleware
@@ -140,6 +151,7 @@ export const getMyChannels = async (req, res) => {
 
 
 // 1. Toggle Subscribe / Unsubscribe
+// api/channel/togelSubscription/:channelId
 export const toggleSubscription = async (req, res) => {
   try {
     const { channelId } = req.params;
@@ -166,6 +178,7 @@ export const toggleSubscription = async (req, res) => {
 };
 
 // 2. Get Videos from Subscribed Channels (For the Subscriptions Page)
+// api/channel/subscriptions/videos
 export const getSubscribedVideos = async (req, res) => {
   try {
     // Step A: Find all channels the logged-in user subscribes to
@@ -186,6 +199,7 @@ export const getSubscribedVideos = async (req, res) => {
 };
 
 // 3. Helper to check subscription status 
+// api/channel/subscribe-status/:channelId
 export const checkSubscriptionStatus = async (req, res) => {
   try {
     const { channelId } = req.params;
@@ -198,7 +212,9 @@ export const checkSubscriptionStatus = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
+/** Returns a list of channels subscribed by the loged in user.
+ * api/channel/subscriptions/channels
+ */
 export const getSubscribedChannels = async (req, res)=> {
   try {
     const channels = await Subscription.find({

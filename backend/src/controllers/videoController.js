@@ -3,6 +3,7 @@ import { Channel } from "../models/Channel.js";
 /**
  * Fetch all videos for the Home Page.
  * I've implemented dynamic filtering by category and title search
+ * api/videos/
  */
 export const getAllVideos = async (req, res) => {
   try {
@@ -38,6 +39,7 @@ export const getAllVideos = async (req, res) => {
 /**
  * Fetch details for a single video.
  * This is used for the Video Player page to display the title, description, and views.
+ * api/videos/:id
  */
 export const getVideoById = async (req, res) => {
   try {
@@ -68,6 +70,7 @@ export const getVideoById = async (req, res) => {
  * Uploads a new video 
  * I am automatically linking the video to the logged-in user's channel 
  * to ensure data consistency.
+ * api/videos/:channelId
  */
 export const addVideo = async (req, res) => {
   try {
@@ -132,6 +135,7 @@ export const addVideo = async (req, res) => {
  * Logic to handle video likes.
  * I have implemented this to be mutually exclusive: if a user likes a video,
  * any existing dislike from that user is automatically removed.
+ * api/videos/:videoId/like
  */
 export const likeVideo = async (req, res) => {
   try {
@@ -168,6 +172,7 @@ export const likeVideo = async (req, res) => {
  * Logic to handle video dislikes.
  * Similar to the like logic, this ensures that a user cannot 
  * simultaneously like and dislike a video.
+ * api/videos/:videoId/dislike
  */
 export const dislikeVideo = async (req, res) => {
   try {

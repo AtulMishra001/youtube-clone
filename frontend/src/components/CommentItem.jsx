@@ -27,7 +27,7 @@ const CommentItem = ({ comment, videoId, refreshComments }) => {
       }
     }
   };
-
+  // deletes a comment
   const handleUpdate = async () => {
     try {
       await api.put(`/comment/${comment._id}`, { text: editedText });
