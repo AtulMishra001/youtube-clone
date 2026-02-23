@@ -45,7 +45,6 @@ const Channel = () => {
             `/channel/subscribe-status/${channel._id}`,
           );
           setIsSubscribed(data.subscribed);
-          setSubscribersCount(channel.subscribers); // Sync count
         } catch (err) {
           console.error(err);
         }
